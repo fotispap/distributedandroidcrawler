@@ -1,0 +1,612 @@
+#
+# Syntax-------------------------------------------------------------------
+# package name : >package
+# resources : -resource (e.g. -hardware, -localfiles, -ui, -gps, -internet, -infosource, -os, -reflection, -threading)
+# #you can create any resources you want (e.g. -whatever).
+# -------------------------------------------------------------------------
+# http://developer.android.com/reference/packages.html
+
+>android
+	#Contains resource classes used by applications included in the platform and defines application permissions for system features.
+
+>android.accessibilityservice
+	#The classes in this package are used for development of accessibility service that provide alternative or augmented feedback to the user.
+
+>android.accounts
+-infosource 1
+
+>android.animation
+	#These classes provide functionality for the property animation system, which allows you to animate object properties of any type. int, float, and hexadecimal color values are supported by default. You can animate any other type by telling the system how to calculate the values for that given type with a custom TypeEvaluator. 
+
+>android.app
+	#Contains high-level classes encapsulating the overall Android application model.
+
+>android.app.Activity
+-ui
+
+>android.app.admin
+-infosource
+	#Provides device administration features at the system level, allowing you to create security-aware applications that are useful in enterprise settings, in which IT professionals require rich control over employee devices.	
+
+>android.app.backup
+-internet
+	#Contains the backup and restore functionality available to applications. If a user wipes the data on their device or upgrades to a new Android-powered device, all applications that have enabled backup can restore the user's previous data when the application is reinstalled.
+
+>android.appwidget
+-ui 	
+	#Contains the components necessary to create "app widgets", which users can embed in other applications (such as the home screen) to quickly access application data and services without launching a new activity.
+
+>android.bluetooth
+-hardware
+	#Provides classes that manage Bluetooth functionality, such as scanning for devices, connecting with devices, and managing data transfer between devices. The Bluetooth API supports both "Classic Bluetooth" and Bluetooth Low Energy.
+
+>android.content
+	#Contains classes for accessing and publishing data on a device.
+
+>android.content.pm 	
+	#Contains classes for accessing information about an application package, including information about its activities, permissions, services, signatures, and providers.
+
+>android.content.res 
+-localfiles	
+	#Contains classes for accessing application resources, such as raw asset files, colors, drawables, media or other other files in the package, plus important device configuration details (orientation, input types, etc.) that affect how the application may behave.
+
+
+>android.database 	
+-localfiles
+	#Contains classes to explore data returned through a content provider.
+
+>android.database.sqlite 	
+-localfiles
+	#Contains the SQLite database management classes that an application would use to manage its own private database.
+
+>android.drm 	
+	#Provides classes for managing DRM content and determining the capabilities of DRM plugins (agents).
+
+>android.gesture 	
+-ui
+	#Provides classes to create, recognize, load and save gestures.
+
+>android.graphics
+-ui
+	#Provides low level graphics tools such as canvases, color filters, points, and rectangles that let you handle drawing to the screen directly.
+
+>android.graphics.drawable 	
+-ui
+	#Provides classes to manage a variety of visual elements that are intended for display only, such as bitmaps and gradients.
+
+>android.graphics.drawable.shapes 	
+	#Contains classes for drawing geometric shapes.
+
+>android.graphics.pdf 	
+	#Contains classes for manipulation of PDF content.
+
+>android.hardware 	
+-hardware
+	#Provides support for hardware features, such as the camera and other sensors.
+
+>android.hardware.display 	
+-hardware
+
+>android.hardware.input 
+-hardware
+
+>android.hardware.location
+-hardware
+-gps 	
+
+>android.hardware.usb
+-hardware 	
+	#Provides support to communicate with USB hardware peripherals that are connected to Android-powered devices.
+
+>android.inputmethodservice 	
+	#Base classes for writing input methods (such as software keyboards).
+
+>android.location
+-hardware
+-gps 	
+	#Contains the framework API classes that define Android location-based and related services.
+
+>com.google.android.gms.location
+-hardware
+-gps
+	#Note: The Google Location Services API, part of Google Play Services, provides a more powerful, high-level framework that automates tasks such as location provider choice and power management. Location Services also provides new features such as activity detection that aren't available in the framework API. Developers who are using the framework API, as well as developers who are just now adding location-awareness to their apps, should strongly consider using the Location Services API.
+
+>android.media 	
+#Provides classes that manage various media interfaces in audio and video.
+
+>android.media.audiofx 	
+#Provides classes that manage audio effects implemented in the media framework.
+
+>android.media.effect 	
+#Provides classes that allow you to apply a variety of visual effects to images and videos.
+
+>android.mtp 	
+-hardware
+	#Provides APIs that let you interact directly with connected cameras and other devices, using the PTP (Picture Transfer Protocol) subset of the MTP (Media Transfer Protocol) specification.
+
+>android.net
+-internet 
+	#Classes that help with network access, beyond the normal java.net.* APIs.
+
+>android.net.http
+-internet 	
+
+>android.net.nsd
+-internet  	
+
+>android.net.rtp
+-internet  	
+	#Provides APIs for RTP (Real-time Transport Protocol), allowing applications to manage on-demand or interactive data streaming.
+
+>android.net.sip
+-internet  	
+	#Provides access to Session Initiation Protocol (SIP) functionality, such as making and answering VOIP calls using SIP.
+
+>android.net.wifi
+-internet  	
+	#Provides classes to manage Wi-Fi functionality on the device.
+
+>android.net.wifi.p2p
+-internet  	
+	#Provides classes to create peer-to-peer (P2P) connections with Wi-Fi Direct.
+
+>android.net.wifi.p2p.nsd 	
+-internet
+
+>android.nfc 	
+-hardware
+	#Provides access to Near Field Communication (NFC) functionality, allowing applications to read NDEF message in NFC tags. A "tag" may actually be another device that appears as a tag.
+
+>android.nfc.cardemulation 
+-hardware	
+
+>android.nfc.tech
+-hardware 	
+	#These classes provide access to a tag technology's features, which vary by the type of tag that is scanned.
+
+>android.opengl 	
+-ui
+	#Provides an OpenGL ES static interface and utilities.
+
+>android.os
+-os
+	#Provides basic operating system services, message passing, and inter-process communication on the device.
+
+>android.os.storage
+-localfiles 	
+	#Contains classes for the system storage service, which manages binary asset filesystems known as Opaque Binary Blobs (OBBs).
+
+>android.preference 	
+#Provides classes that manage application preferences and implement the preferences UI.
+
+>android.print
+-hardware 	
+	#Provides classes for implementing print support in applications and also contains all base classes and abstractions involved in printing.
+
+>android.print.pdf 	
+-hardware
+
+>android.printservice 	
+-hardware
+	#Provides classes for implementing print services.
+
+>android.provider 	
+	#Provides convenience classes to access the content providers supplied by Android.
+
+>android.renderscript 	
+	#RenderScript provides support for high-performance computation across heterogeneous processors.
+
+>android.sax 	
+	#A framework that makes it easy to write efficient and robust SAX handlers.
+
+>android.security
+-crypto
+	#Provides access to a few facilities of the Android security subsystems.
+
+>android.service.dreams
+-ui 	
+
+>android.service.notification 	
+
+>android.service.textservice 	
+	#Provides classes that allow you to create spell checkers in a manner similar to the input method framework (for IMEs).
+
+>android.service.wallpaper 	
+
+>android.speech 	
+
+>android.speech.tts 	
+
+>android.support.v13.app 	
+#Support classes to access some of the android.app package features introduced after API level 13 in a backwards compatible fashion.
+
+>android.support.v4.accessibilityservice 	
+#Support android.accessibilityservice classes to assist with development of applications for android API level 4 or later.
+
+>android.support.v4.app 	
+#Support android.app classes to assist with development of applications for android API level 4 or later.
+
+>android.support.v4.content 	
+	#Support android.content classes to assist with development of applications for android API level 4 or later.
+
+>android.support.v4.content.pm 	
+	#Support android.content.pm classes to assist with development of applications for android API level 4 or later.
+
+>android.support.v4.database
+-localfiles 	
+	#Support android.database classes to assist with development of applications for android API level 4 or later.
+
+>android.support.v4.graphics.drawable
+-ui 	
+
+>android.support.v4.hardware.display
+-hardware 	
+
+>android.support.v4.media 	
+
+>android.support.v4.net
+-internet 	
+
+>android.support.v4.os
+-os 	
+	#Support android.os classes to assist with development of applications for android API level 4 or later.
+
+>android.support.v4.print
+-hardware 	
+
+>android.support.v4.text 
+
+>android.support.v4.util 	
+	#Support android.util classes to assist with development of applications for android API level 4 or later.
+
+>android.support.v4.view
+-ui 	
+	#Support android.util classes to assist with development of applications for android API level 4 or later.
+
+>android.support.v4.view.accessibility 
+-ui	
+	#Support classes to access some of the android.view.accessibility package features introduced after API level 4 in a backwards compatible fashion.
+
+>android.support.v4.widget
+-ui 	
+	#Support android.widget classes to assist with development of applications for android API level 4 or later.
+
+>android.support.v7.app 	
+
+>android.support.v7.appcompat 	
+
+>android.support.v7.gridlayout
+-ui 	
+
+>android.support.v7.media 	
+	#Contains APIs that control the routing of media channels and streams from the current device to external speakers and destination devices.
+
+>android.support.v7.mediarouter
+
+>android.support.v7.view
+-ui
+
+>android.support.v7.widget
+-ui
+
+>android.support.v8.renderscript
+
+>android.telephony
+-hardware 	
+	#Provides APIs for monitoring the basic phone information, such as the network type and connection state, plus utilities for manipulating phone number strings.
+
+>android.telephony.cdma 
+-hardware 	
+	#Provides APIs for utilizing CDMA-specific telephony features.
+
+>android.telephony.gsm
+-hardware  	
+	#Provides APIs for utilizing GSM-specific telephony features, such as text/data/PDU SMS messages.
+
+>android.test 	
+	#A framework for writing Android test cases and suites.
+
+>android.test.mock 	
+	#Utility classes providing stubs or mocks of various Android framework building blocks.
+
+>android.test.suitebuilder 	
+	#Utility classes supporting the test runner classes.
+
+>android.text 	
+-ui
+	#Provides classes used to render or track text and text spans on the screen.
+
+>android.text.format 	
+	#This package contains alternative classes for some text formatting classes defined in java.util and java.text.
+
+>android.text.method 	
+-hardware
+	#Provides classes that monitor or modify keypad input.
+
+>android.text.style 	
+	#Provides classes used to view or change the style of a span of text in a View object.
+
+>android.text.util 	
+	#Utilities for converting identifiable text strings into clickable links and creating RFC 822-type message (SMTP) tokens.
+
+>android.transition 	
+-ui
+	#The classes in this package enable "scenes & transitions" functionality for view hiearchies.
+
+>android.util 	
+	#Provides common utility methods such as date/time manipulation, base64 encoders and decoders, string and number conversion methods, and XML utilities.
+
+>android.view 	
+-ui
+	#Provides classes that expose basic user interface classes that handle screen layout and interaction with the user.
+
+>android.view.accessibility 	
+-ui
+	#The classes in this package are used to represent screen content and changes to it as well as APIs for querying the global accessibility state of the system.
+
+>android.view.animation 	
+-ui
+#Provides classes that handle tweened animations.
+
+>android.view.inputmethod 	
+-ui
+#Framework classes for interaction between views and input methods (such as soft keyboards).
+
+>android.view.textservice 	
+-ui
+
+>android.webkit
+-internet 	
+	#Provides tools for browsing the web.
+
+>android.widget
+-ui 	
+#The widget package contains (mostly visual) UI elements to use on your Application screen.
+
+>dalvik.bytecode 	
+-os
+
+>dalvik.system 	
+-os
+
+>java.awt.font 	
+>java.beans 	
+>java.io 	
+>java.lang 	
+>java.lang.annotation 	
+>java.lang.ref 	
+
+>java.lang.reflect
+-reflection
+
+>java.math
+
+>java.net 	
+-internet
+
+>java.nio 	
+>java.nio.channels 	
+>java.nio.channels.spi 	
+>java.nio.charset 	
+>java.nio.charset.spi 	
+
+>java.security 	
+	#Extensible cryptographic service provider infrastructure (SPI) for using and defining services such as Certificates, Keys, KeyStores, MessageDigests, and Signatures.
+
+>java.security.acl 	
+	#This package provides the classes and the interfaces needed to build Access Control Lists.
+
+>java.security.cert 	
+	#This package provides all the classes and all the interfaces needed to generate, administer and verify X.509 certificates.
+
+>java.security.interfaces 	
+	#This package provides the interfaces needed to generate: (1) Keys for the RSA asymmetric encryption algorithm using the PKCS#1 standard; (2) Keys for the Digital Signature Algorithm (DSA) specified by FIPS-186; (3) Keys for a generic Elliptic Curve asymmetric encryption algorithm.
+
+>java.security.spec 	
+#This package provides the classes and interfaces needed to specify keys and parameters for encryption and signing algorithms.
+
+>java.sql 	
+>java.text 	
+>java.util
+
+>java.util.concurrent 	
+-threading
+	#Utility classes commonly useful in concurrent programming.
+
+>java.util.concurrent.atomic 	
+	#A small toolkit of classes that support lock-free thread-safe programming on single variables.
+
+>java.util.concurrent.locks
+-threading 	
+	#Interfaces and classes providing a framework for locking and waiting for conditions that is distinct from built-in synchronization and monitors.
+
+>java.util.jar 	
+>java.util.logging 	
+>java.util.prefs 	
+>java.util.regex 	
+>java.util.zip 	
+
+>javax.crypto
+-crypto
+	#This package provides the classes and interfaces for cryptographic applications implementing algorithms for encryption, decryption, or key agreement.
+
+>javax.crypto.interfaces 
+-crypto
+	#This package provides the interfaces needed to implement the Diffie-Hellman (DH) key agreement's algorithm as specified by PKCS#3.
+
+>javax.crypto.spec
+-crypto
+	#This package provides the classes and interfaces needed to specify keys and parameter for encryption.
+
+>javax.microedition.khronos.egl 	
+
+>javax.microedition.khronos.opengles 	
+	#Provides a standard OpenGL interface.
+
+>javax.net 
+-internet
+
+>javax.net.ssl
+-internet
+	#This package provides classes and interfaces needed to use the Secure Sockets Layer (SSL) protocol and the successor Transport Layer Security (TLS) protocol.
+
+>javax.security.auth 	
+-crypto
+
+>javax.security.auth.callback 
+-crypto
+	#This package provides classes and interfaces needed to interact with the application in order to execute the authentication and authorization processes.
+
+>javax.security.auth.login 
+-crypto
+	#This package provides a pluggable and stackable authentication system based on ideas and concepts from the Unix-PAM module.
+
+>javax.security.auth.x500 
+-crypto
+	#This package provides classes needed to store X.500 principals and their credentials.
+
+>javax.security.cert 	
+-crypto
+	#This package is provided only for compatibility reasons.
+
+>javax.sql 	
+>javax.xml 	
+>javax.xml.datatype 	
+>javax.xml.namespace 	
+>javax.xml.parsers 	
+>javax.xml.transform 	
+>javax.xml.transform.dom 	
+>javax.xml.transform.sax 	
+>javax.xml.transform.stream 	
+>javax.xml.validation 	
+>javax.xml.xpath 	
+>junit.framework 	
+	#The junit test framework.
+>junit.runner 	
+	#Utility classes supporting the junit test framework.
+
+>org.apache.http
+-internet
+	#The core interfaces and classes of the HTTP components.
+
+>org.apache.http.auth
+-internet
+	#The API for client-side HTTP authentication against a server, commonly referred to as HttpAuth.
+
+>org.apache.http.auth.params
+-internet
+	#Parameters for configuring HttpAuth.
+
+>org.apache.http.client
+-internet
+	#The API for client-side HTTP communication and entry point to the HttpClient module.
+
+>org.apache.http.client.entity 	
+-internet
+
+>org.apache.http.client.methods
+-internet
+	#Request implementations for the various HTTP methods like GET and POST.
+
+>org.apache.http.client.params
+-internet
+	#Parameters for configuring HttpClient.
+
+>org.apache.http.client.protocol
+-internet
+	#Additional request and response interceptors.
+
+>org.apache.http.client.utils
+-internet
+	#Helpers and utility classes for HttpClient.
+
+>org.apache.http.conn
+-internet
+	#The client-side connection management and handling API at the heart of what is referred to as HttpConn.
+
+>org.apache.http.conn.params
+-internet
+	#Parameters for configuring HttpConn.
+
+>org.apache.http.conn.routing
+-internet
+	#The client-side route representation and tracking API, part of HttpConn.
+
+>org.apache.http.conn.scheme 
+-internet
+
+>org.apache.http.conn.ssl
+-internet
+	#TLS/SSL specific parts of the HttpConn API.
+
+>org.apache.http.conn.util 
+-internet
+
+>org.apache.http.cookie
+-internet
+	#The API for client-side state management via cookies, commonly referred to as HttpCookie.
+
+>org.apache.http.cookie.params
+-internet
+	#Parameters for configuring HttpCookie.
+
+>org.apache.http.entity
+-internet
+	#Representations for HTTP message entities.
+
+>org.apache.http.impl
+-internet
+	#Default implementations for interfaces in org.apache.http.
+
+>org.apache.http.impl.auth 
+-internet
+
+>org.apache.http.impl.client 
+-internet
+
+>org.apache.http.impl.conn 	
+-internet
+
+>org.apache.http.impl.conn.tsccm
+-internet
+	#The implementation of a thread-safe client connection manager.
+
+>org.apache.http.impl.cookie 	
+-internet
+
+>org.apache.http.impl.entity
+-internet
+	#Default implementations for interfaces in org.apache.http.entity.
+
+>org.apache.http.impl.io
+-internet
+	#Default implementations for interfaces in org.apache.http.io.
+
+>org.apache.http.io
+-internet
+	#The transport layer abstraction of the HTTP components.
+
+>org.apache.http.message
+-internet
+	#A selection of HTTP message implementations.
+
+>org.apache.http.params
+-internet
+	#The parameterization framework for HTTP components.
+
+>org.apache.http.protocol
+-internet
+	#HTTP protocol execution framework.
+
+>org.apache.http.util
+-internet
+	#Mostly utility classes with static helper methods for various purposes.
+
+>org.json 	
+>org.w3c.dom 	
+>org.w3c.dom.ls 	
+>org.xml.sax 	
+>org.xml.sax.ext 	
+>org.xml.sax.helpers 	
+>org.xmlpull.v1 	
+>org.xmlpull.v1.sax2 	

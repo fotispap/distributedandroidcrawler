@@ -1,0 +1,14 @@
+#java.lang.object inheritances:------
+>toString
+>equals
+>finalize
+>getClass
+>hashCode
+#>notify
+#>notifyAll
+>clone
+#>wait
+>java.util
+>java.lang
+>android.support
+#------------------------------------

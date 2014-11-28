@@ -1,0 +1,6 @@
+ 
+1- Create an apks/ folder and place wanted android applications
+2- Install apktool in your path or some folder
+3- Run "java -jar DroidBroker.jar" or "java -jar DroidBroker.jar <-a apktool_path>"
+4- Play with -G for graphs and -P flags. P option enables tainting APIs so that methods that directly/indirectly may access this methods get tainted.
+5- Check the generated results folder for the json of the app
