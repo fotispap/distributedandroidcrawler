@@ -51,29 +51,26 @@ def task_listener_reverse(gearman_worker, gearman_job):
 		prot = m.docV2 # protobuf
 
 		# Check if apk has already been processed
-		pipe = redis_conn
+		pipe = redis_conn.pipeline()
 		try:
-			#pipe.watch(gearman_job.data)
+			pipe.watch(gearman_job.data)
 			rv = redis_conn.get(packagename)
 			if rv == None:
-				print "Inserting at redis: " + packagename
-				#pipe.multi()
+				pipe.multi()
 				pipe.set(packagename, prot.details.appDetails.versionCode)
-				#pipe.execute()
+				pipe.execute()
 			elif rv < prot.details.appDetails.versionCode:
-				print "Updating at redis: " + packagename
-				#pipe.multi()
+				pipe.multi()
 				pipe.set(packagename, prot.details.appDetails.versionCode)
-				#pipe.execute()
+				pipe.execute()
 			else:
-				print "File already done.."
 				continue
 		except WatchError:
 			print "error:" + os.getpid() + "encountered collision and did not change"
-			#pipe.reset()
+			pipe.reset()
 			continue
-		#finally:
-			#pipe.reset()
+		finally:
+			pipe.reset()
 		filename = packagename + ".apk"
 		details = protobuf_to_dict.protobuf_to_dict(prot.details) # This serializes google's protobuf to JSON
 		rating = protobuf_to_dict.protobuf_to_dict(prot.aggregateRating)
@@ -102,7 +99,7 @@ def task_listener_reverse(gearman_worker, gearman_job):
 		print "Done"
 		f.close()
 		print "Running DroidBroker Tool"
-		'''
+
 		#Run Droid Broker 
 		args = ['java','-jar', 'DroidBroker.jar', '-P', '-g']
 		
@@ -114,15 +111,15 @@ def task_listener_reverse(gearman_worker, gearman_job):
 		broker_json = json.load(broker_results)
 		#pprint(broker_json)
 		broker_results.close()
-		'''
-		broker_json = { 'test': 'test'}
+
+
 		db_doc = { 'metadata': metadata, 'decompiled': broker_json }
 		db.save(db_doc)
 
 		print "Removing files..."
 		#DELETE FILES
 		try:
-			shutil.rmtree("./results" + packagename)
+			shutil.rmtree("./results/" + packagename)
 			print "Removing: " + "./apks/" + filename
 			os.remove("./apks/" + filename)
 		except:
