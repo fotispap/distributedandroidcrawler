@@ -117,8 +117,10 @@ def task_listener_reverse(gearman_worker, gearman_job):
 
 
 		db_doc = { 'metadata': metadata, 'decompiled': broker_json }
-		db.save(db_doc)
-
+		try:
+			db[packagename] = db_doc
+		except:
+			print "DB Exception"
 		print "Removing files..."
 		#DELETE FILES
 		try:
