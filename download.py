@@ -56,14 +56,17 @@ def task_listener_reverse(gearman_worker, gearman_job):
 			pipe.watch(gearman_job.data)
 			rv = redis_conn.get(packagename)
 			if rv == None:
+				print "Inserting new APK"
 				pipe.multi()
 				pipe.set(packagename, prot.details.appDetails.versionCode)
 				pipe.execute()
 			elif rv < prot.details.appDetails.versionCode:
+				print "Current version is outdated"
 				pipe.multi()
 				pipe.set(packagename, prot.details.appDetails.versionCode)
 				pipe.execute()
 			else:
+				print "This app has already be done"
 				continue
 		except WatchError:
 			print "error:" + os.getpid() + "encountered collision and did not change"
