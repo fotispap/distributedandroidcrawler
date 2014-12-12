@@ -26,8 +26,8 @@ api = GooglePlayAPI(ANDROID_ID)
 api.login(GOOGLE_LOGIN, GOOGLE_PASSWORD, AUTH_TOKEN)
 
 # Establishing redis & gearman connections
-gm_worker = gearman.GearmanWorker(['127.0.0.1:4730'])
-redis_conn = redis.Redis(host="127.0.0.1", port=6379, db=0)
+gm_worker = gearman.GearmanWorker(['5.135.182.108:4730'])
+redis_conn = redis.Redis(host="5.135.182.108", port=6379, db=0)
 print "Registered and waiting for work"
 def task_listener_reverse(gearman_worker, gearman_job):
 	
@@ -79,7 +79,7 @@ def task_listener_reverse(gearman_worker, gearman_job):
 
 		#Open couchdb connection
 		try:
-			couch = couchdb.Server()
+			couch = couchdb.Server("http://5.135.182.108:5984")
 		except:
 			print "Error connecting to db"
 		db = couch['decompiled']
