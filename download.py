@@ -19,7 +19,7 @@ from googleplay import GooglePlayAPI
 from helpers import sizeof_fmt
 
 
-nb_res = 3
+nb_res = 50
 offset = None
 # Authenticating to Google Play
 api = GooglePlayAPI(ANDROID_ID)
@@ -87,7 +87,11 @@ def task_listener_reverse(gearman_worker, gearman_job):
 			print "Error connecting to db"
 		db = couch['decompiled']
 		#db.save(metadata)
-
+	 	app_type = prot.offer[0].formattedAmount
+		if app_type != "Free":
+			db[packagename] = metadata
+			print "App is not free. Adding only metadata"
+			continue
 		#print m
 		print "================================"
 		#print doc
@@ -96,7 +100,10 @@ def task_listener_reverse(gearman_worker, gearman_job):
 
 		# Download (in ./apks/ folder for DroidBroker to find them)
 		print "Downloading %s..." % sizeof_fmt(prot.details.appDetails.installationSize),
+		network_start = time.time()
 		data = api.download(packagename, vc, ot) # Download :D
+		network_finish = ( time.time() - network_start )
+		total_network_time = total_network_time + network_finish
 		f = open("./apks/" + filename, "wb")
 		f.write(data)
 		print "Done"
@@ -105,9 +112,11 @@ def task_listener_reverse(gearman_worker, gearman_job):
 
 		#Run Droid Broker 
 		args = ['java','-jar', 'DroidBroker.jar', '-P', '-g']
-		
+		decompile_start = time.time()
 		subprocess.call(args)
-
+		time_to_decompile = (time.time() - decompile_start)
+		total_decompile_time = total_decompile_time + time_to_decompile
+		
 		json_filename=("./results/" + packagename + '.json')
 
 		broker_results = open("./results/" + packagename + '.json')
@@ -117,15 +126,16 @@ def task_listener_reverse(gearman_worker, gearman_job):
 
 
 		db_doc = { 'metadata': metadata, 'decompiled': broker_json }
-		try:
-			db[packagename] = db_doc
-		except:
-			print "DB Exception"
+		db_time_start = time.time()
+		db[packagename] = db_doc
+		db_time = time.time() - db_time_start
+		total_network_time = total_network_time + db_time
 		print "Removing files..."
+		print "Timing: Network: " + total_network_time + "Decompiling: " + total_decompile_time
 		#DELETE FILES
 		try:
-			shutil.rmtree("./results/" + packagename)
-			print "Removing: " + "./apks/" + filename
+			shutil.rmtree("./results/")
+			print "Removing files..."
 			os.remove("./apks/" + filename)
 		except:
 			print "Failed to remove files"
