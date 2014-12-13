@@ -12,6 +12,7 @@ import gearman
 import redis
 import os
 import shutil
+import time
 from pprint import pprint
 from redis import WatchError
 from config import *
@@ -39,6 +40,7 @@ def task_listener_reverse(gearman_worker, gearman_job):
 		print "Error: something went wrong. Maybe the nb_res you specified was too big?"
 		sys.exit(1)
 	doc = message.doc[0]
+
 	for c in doc.child:
 		print c.docid
 		print c.title
@@ -79,7 +81,7 @@ def task_listener_reverse(gearman_worker, gearman_job):
 		rating = protobuf_to_dict.protobuf_to_dict(prot.aggregateRating)
 		description = prot.descriptionHtml
 		metadata = { 'docid': prot.docid, 'creator': prot.creator, 'title': prot.title, 'details': details['appDetails'], 'rating': rating }
-
+		print "I reach here"
 		#Open couchdb connection
 		try:
 			couch = couchdb.Server("http://5.135.182.108:5984")
@@ -88,6 +90,7 @@ def task_listener_reverse(gearman_worker, gearman_job):
 		db = couch['decompiled']
 		#db.save(metadata)
 	 	app_type = prot.offer[0].formattedAmount
+		print "I reach here as well"
 		if app_type != "Free":
 			db[packagename] = metadata
 			print "App is not free. Adding only metadata"
@@ -101,9 +104,13 @@ def task_listener_reverse(gearman_worker, gearman_job):
 		# Download (in ./apks/ folder for DroidBroker to find them)
 		print "Downloading %s..." % sizeof_fmt(prot.details.appDetails.installationSize),
 		network_start = time.time()
-		data = api.download(packagename, vc, ot) # Download :D
+		try:
+			data = api.download(packagename, vc, ot) # Download :D
+		except:
+			print "Problem"
 		network_finish = ( time.time() - network_start )
 		total_network_time = total_network_time + network_finish
+		print total_network_time
 		f = open("./apks/" + filename, "wb")
 		f.write(data)
 		print "Done"
