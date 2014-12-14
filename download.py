@@ -26,12 +26,13 @@ offset = None
 api = GooglePlayAPI(ANDROID_ID)
 api.login(GOOGLE_LOGIN, GOOGLE_PASSWORD, AUTH_TOKEN)
 
+
 # Establishing redis & gearman connections
 gm_worker = gearman.GearmanWorker(['5.135.182.108:4730'])
 redis_conn = redis.Redis(host="5.135.182.108", port=6379, db=0)
 print "Registered and waiting for work"
 def task_listener_reverse(gearman_worker, gearman_job):
-	
+	nb_res = 50	
 	search_term = gearman_job.data
 	print "Will search for: " + search_term
 	try:
@@ -91,6 +92,7 @@ def task_listener_reverse(gearman_worker, gearman_job):
 		#db.save(metadata)
 	 	app_type = prot.offer[0].formattedAmount
 		print "I reach here as well"
+		print app_type
 		if app_type != "Free":
 			db[packagename] = metadata
 			print "App is not free. Adding only metadata"
@@ -100,17 +102,18 @@ def task_listener_reverse(gearman_worker, gearman_job):
 		#print doc
 		vc = prot.details.appDetails.versionCode
 		ot = prot.offer[0].offerType
-
+		'''
 		# Download (in ./apks/ folder for DroidBroker to find them)
 		print "Downloading %s..." % sizeof_fmt(prot.details.appDetails.installationSize),
-		network_start = time.time()
+		#network_start = time.time()
+		#print "NETWORK START: " + network_start
 		try:
 			data = api.download(packagename, vc, ot) # Download :D
 		except:
 			print "Problem"
-		network_finish = ( time.time() - network_start )
-		total_network_time = total_network_time + network_finish
-		print total_network_time
+		#network_finish = ( time.time() - network_start )
+		#total_network_time = total_network_time + network_finish
+		#print total_network_time
 		f = open("./apks/" + filename, "wb")
 		f.write(data)
 		print "Done"
@@ -119,10 +122,10 @@ def task_listener_reverse(gearman_worker, gearman_job):
 
 		#Run Droid Broker 
 		args = ['java','-jar', 'DroidBroker.jar', '-P', '-g']
-		decompile_start = time.time()
+		#decompile_start = time.time()
 		subprocess.call(args)
-		time_to_decompile = (time.time() - decompile_start)
-		total_decompile_time = total_decompile_time + time_to_decompile
+		#time_to_decompile = (time.time() - decompile_start)
+		#total_decompile_time = total_decompile_time + time_to_decompile
 		
 		json_filename=("./results/" + packagename + '.json')
 
@@ -130,22 +133,34 @@ def task_listener_reverse(gearman_worker, gearman_job):
 		broker_json = json.load(broker_results)
 		#pprint(broker_json)
 		broker_results.close()
-
+		print "HEYEYEYEYEYYEE"
 
 		db_doc = { 'metadata': metadata, 'decompiled': broker_json }
-		db_time_start = time.time()
+		#db_time_start = time.time()
 		db[packagename] = db_doc
-		db_time = time.time() - db_time_start
-		total_network_time = total_network_time + db_time
+		#db_time = time.time() - db_time_start
+		#total_network_time = total_network_time + db_time
 		print "Removing files..."
-		print "Timing: Network: " + total_network_time + "Decompiling: " + total_decompile_time
+		#print "Timing: Network: " + total_network_time + "Decompiling: " + total_decompile_time
 		#DELETE FILES
+		
 		try:
 			shutil.rmtree("./results/")
 			print "Removing files..."
 			os.remove("./apks/" + filename)
 		except:
 			print "Failed to remove files"
+		print "Writting log data"
+		log = open("total_apps", 'rb+')
+		total_apps = log.read()
+		if total_apps == '':
+			total = 1
+		else:
+			total = int(total_apps) + 1
+		log.seek(0)
+		log.write(str(total))
+		log.close()
+		'''
 	return gearman_job.data + str(os.getpid())
 	
 # gm_worker.set_client_id is optional
