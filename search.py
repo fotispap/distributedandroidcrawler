@@ -38,5 +38,6 @@ except:
 print_header_line()
 doc = message.doc[0]
 for c in doc.child:
-    print_result_line(c)
+	print c.docid
+	#print_result_line(c)
 

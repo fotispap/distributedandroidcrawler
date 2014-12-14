@@ -13,6 +13,7 @@ import redis
 import os
 import shutil
 import time
+import socket
 from pprint import pprint
 from redis import WatchError
 from config import *
@@ -20,28 +21,38 @@ from googleplay import GooglePlayAPI
 from helpers import sizeof_fmt
 
 
-nb_res = 50
 offset = None
 # Authenticating to Google Play
 api = GooglePlayAPI(ANDROID_ID)
 api.login(GOOGLE_LOGIN, GOOGLE_PASSWORD, AUTH_TOKEN)
-
 # Establishing redis & gearman connections
-gm_worker = gearman.GearmanWorker(['5.135.182.108:4730'])
-redis_conn = redis.Redis(host="5.135.182.108", port=6379, db=0)
+global SERVER_HOST
+global HOSTNAME
+global total_apps
+total_apps =0
+HOSTNAME=socket.gethostname()
+SERVER_HOST= "127.0.0.1"
+gm_worker = gearman.GearmanWorker([SERVER_HOST+':4730'])
+redis_conn = redis.Redis(host=SERVER_HOST, port=6379, db=0)
 print "Registered and waiting for work"
 def task_listener_reverse(gearman_worker, gearman_job):
 	
 	search_term = gearman_job.data
+	print HOSTNAME
 	print "Will search for: " + search_term
+	nb_res = 50
+	print nb_res
+	#print "NB_RES:" + nb_res
 	try:
-		message = api.search(search_term, nb_res, offset)
+		message = api.search(search_term, nb_results=nb_res)
 	except:
 		print "Error: something went wrong. Maybe the nb_res you specified was too big?"
 		sys.exit(1)
 	doc = message.doc[0]
 
 	for c in doc.child:
+		time_total_start = time.time()
+		#print time_total_start
 		print c.docid
 		print c.title
 
@@ -53,8 +64,8 @@ def task_listener_reverse(gearman_worker, gearman_job):
 		prot = m.docV2 # protobuf
 
 		# Check if apk has already been processed
-		pipe = redis_conn.pipeline()
 		try:
+			pipe = redis_conn.pipeline()
 			pipe.watch(gearman_job.data)
 			rv = redis_conn.get(packagename)
 			if rv == None:
@@ -75,42 +86,45 @@ def task_listener_reverse(gearman_worker, gearman_job):
 			pipe.reset()
 			continue
 		finally:
-			pipe.reset()
+				pipe.reset()
 		filename = packagename + ".apk"
 		details = protobuf_to_dict.protobuf_to_dict(prot.details) # This serializes google's protobuf to JSON
 		rating = protobuf_to_dict.protobuf_to_dict(prot.aggregateRating)
 		description = prot.descriptionHtml
 		metadata = { 'docid': prot.docid, 'creator': prot.creator, 'title': prot.title, 'details': details['appDetails'], 'rating': rating }
-		print "I reach here"
+		#print "I reach here"
 		#Open couchdb connection
+		print SERVER_HOST
+		db_host = "http://" + SERVER_HOST + ":5984"
+		print db_host
 		try:
-			couch = couchdb.Server("http://5.135.182.108:5984")
+			couch = couchdb.Server("http://" + SERVER_HOST + ":5984")
 		except:
 			print "Error connecting to db"
 		db = couch['decompiled']
 		#db.save(metadata)
 	 	app_type = prot.offer[0].formattedAmount
-		print "I reach here as well"
+		#print "I reach here as well"
 		if app_type != "Free":
 			db[packagename] = metadata
 			print "App is not free. Adding only metadata"
 			continue
 		#print m
-		print "================================"
+		#print "================================"
 		#print doc
 		vc = prot.details.appDetails.versionCode
 		ot = prot.offer[0].offerType
 
 		# Download (in ./apks/ folder for DroidBroker to find them)
 		print "Downloading %s..." % sizeof_fmt(prot.details.appDetails.installationSize),
-		network_start = time.time()
+		download_start = time.time()
 		try:
 			data = api.download(packagename, vc, ot) # Download :D
 		except:
 			print "Problem"
-		network_finish = ( time.time() - network_start )
-		total_network_time = total_network_time + network_finish
-		print total_network_time
+		download_finish = time.time()
+		total_download_time = download_finish - download_start
+		print "DOWNLOAD TIME: " + str(total_download_time)
 		f = open("./apks/" + filename, "wb")
 		f.write(data)
 		print "Done"
@@ -122,30 +136,52 @@ def task_listener_reverse(gearman_worker, gearman_job):
 		decompile_start = time.time()
 		subprocess.call(args)
 		time_to_decompile = (time.time() - decompile_start)
-		total_decompile_time = total_decompile_time + time_to_decompile
-		
-		json_filename=("./results/" + packagename + '.json')
-
+		print "DECOMPILE TIME: " + str(time_to_decompile)
 		broker_results = open("./results/" + packagename + '.json')
 		broker_json = json.load(broker_results)
 		#pprint(broker_json)
 		broker_results.close()
 
-
-		db_doc = { 'metadata': metadata, 'decompiled': broker_json }
-		db_time_start = time.time()
-		db[packagename] = db_doc
-		db_time = time.time() - db_time_start
-		total_network_time = total_network_time + db_time
+		print "I REACH HEREEEEEEEEEEE"
+		try:
+			db_doc = { 'metadata': metadata, 'decompiled': broker_json }
+			db_time_start = time.time()
+			db[packagename] = db_doc
+			db_time_stop = time.time()
+			db_total = db_time_stop - db_time_start
+			print "DB_TIME:" + str(db_total)
+		except:
+			print "DB_PROBLEMS"
+		#total_network_time = total_network_time + db_time
 		print "Removing files..."
-		print "Timing: Network: " + total_network_time + "Decompiling: " + total_decompile_time
-		#DELETE FILES
 		try:
 			shutil.rmtree("./results/")
 			print "Removing files..."
 			os.remove("./apks/" + filename)
 		except:
 			print "Failed to remove files"
+		#total_apps +=1
+		end = time.time()
+		total_time = end- time_total_start
+		print "Total time:" + str(end - time_total_start)
+		db_stats = couch['statistics']
+		db_statistics = db_stats.get(HOSTNAME)
+		try:
+			if db_statistics is None:
+				statistics = { 'total_apps': 1, 'time_db': db_total, 'time_decompile': time_to_decompile, "time_download": total_download_time, 'total_time': total_time }
+				db_stats[HOSTNAME] = statistics
+			else:
+				db_statistics['total_apps'] += 1
+				db_statistics['time_db'] += db_total
+				db_statistics['time_decompile'] += time_to_decompile
+				db_statistics['time_download'] += total_download_time
+				db_statistics['total_time'] += total_time
+				db_stats[HOSTNAME] = db_statistics
+		except:
+			print "DB PROBLEM"
+
+		# print "Total time for this app: " + time_total
+		
 	return gearman_job.data + str(os.getpid())
 	
 # gm_worker.set_client_id is optional
